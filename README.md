@@ -80,7 +80,7 @@ You can interpolate the RRDB_ESRGAN and RRDB_PSNR models with alpha in [0, 1].
 
 You can download all the resutls from [Google Drive](https://drive.google.com/drive/folders/1iaM-c6EgT1FNoJAOKmDrK7YhEhtlKcLx?usp=sharing). (:heavy_check_mark: included;  :heavy_minus_sign: not included; :o: TODO)
 
-HR images can be downloaed from [BasicSR-Datasets](https://github.com/BlueAmulet/BasicSR#datasets).
+HR images can be downloaded from [BasicSR-Datasets](https://github.com/BlueAmulet/BasicSR#datasets).
 
 | Datasets |LR | [*ESRGAN*](https://arxiv.org/abs/1809.00219) | [SRGAN](https://arxiv.org/abs/1609.04802) | [EnhanceNet](http://openaccess.thecvf.com/content_ICCV_2017/papers/Sajjadi_EnhanceNet_Single_Image_ICCV_2017_paper.pdf) | [CX](https://arxiv.org/abs/1803.04626) |
 |:---:|:---:|:---:|:---:|:---:|:---:|
