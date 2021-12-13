@@ -105,8 +105,8 @@ elif os.path.isfile(args.output):
 elif not os.path.exists(args.output):
     os.mkdir(args.output)
 
-import bpdb
-bpdb.set_trace()
+# import bpdb
+# bpdb.set_trace()
 
 model_path = args.model
 device = torch.device('cpu' if args.cpu else 'cuda')
