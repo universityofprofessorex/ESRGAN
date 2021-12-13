@@ -1,12 +1,19 @@
+from __future__ import annotations
 # python test.py models/RRDB_ESRGAN_x4_old_arch.pth --cpu
-# python test.py /Users/malcolm/dev/universityofprofessorex/ESRGAN/models/countryroads_ezogaming_4x_wtfpl_esrgan_universal_model/4x_CountryRoads_377000_G.pth --cpu
-# python test.py /Users/malcolm/dev/universityofprofessorex/ESRGAN/models/4x_valar_musl_4x_cc0_esrganplus_realistic_photos/4x_Valar_v1.pth --cpu
-# python test.py /Users/malcolm/dev/universityofprofessorex/ESRGAN/models/600k_650k_boorugan_tal_4x_wtfpl_esrgan_anime/4x_BooruGan_600k.pth --cpu
-# python test.py /Users/malcolm/dev/universityofprofessorex/ESRGAN/models/600k_650k_boorugan_tal_4x_wtfpl_esrgan_anime/4x_BooruGan_650k.pth --cpu
-# python test.py /Users/malcolm/dev/universityofprofessorex/ESRGAN/models/fsmangav2_jacob__4x_cc_by-nc-sa_4_0_esrgan_manga/4xFSMangaV2.pth --cpu
-# python test.py /Users/malcolm/dev/universityofprofessorex/ESRGAN/models/mangascalev3_bunzeroplusplus_2x_cc_by_nc_sa_4_0_esrganplus_manga/2x_MangaScaleV3.pth --cpu
-# python test.py /Users/malcolm/dev/universityofprofessorex/ESRGAN/models/nmkd_typescale_nmkd_8x_wtfpl_esrgan_text_2020_11_04/8x_NMKD-Typescale_175k.pth --cpu
-# python test.py /Users/malcolm/dev/universityofprofessorex/ESRGAN/models/8x_boymebob_redux_joey_8x_cc_by_nc_sa_4_0_esrganplus_joey_s_fork_efonte_fork_or_innfer_required_to_use_animation_2021_08_19_upscaling_cartoons/8x_BoyMeBob-Redux/8x_BoyMeBob-Redux_200000_G.pth --cpu
+# [Universal Models]
+# python test.py ~/dev/universityofprofessorex/ESRGAN/models/countryroads_ezogaming_4x_wtfpl_esrgan_universal_model/4x_CountryRoads_377000_G.pth --cpu
+# [Realistic Photos]
+# python test.py ~/dev/universityofprofessorex/ESRGAN/models/4x_valar_musl_4x_cc0_esrganplus_realistic_photos/4x_Valar_v1.pth --cpu
+# [anime]
+# python test.py ~/dev/universityofprofessorex/ESRGAN/models/600k_650k_boorugan_tal_4x_wtfpl_esrgan_anime/4x_BooruGan_600k.pth --cpu
+# python test.py ~/dev/universityofprofessorex/ESRGAN/models/600k_650k_boorugan_tal_4x_wtfpl_esrgan_anime/4x_BooruGan_650k.pth --cpu
+# [manga]
+# python test.py ~/dev/universityofprofessorex/ESRGAN/models/fsmangav2_jacob__4x_cc_by-nc-sa_4_0_esrgan_manga/4xFSMangaV2.pth --cpu
+# python test.py ~/dev/universityofprofessorex/ESRGAN/models/mangascalev3_bunzeroplusplus_2x_cc_by_nc_sa_4_0_esrganplus_manga/2x_MangaScaleV3.pth --cpu
+# [text]
+# python test.py ~/dev/universityofprofessorex/ESRGAN/models/nmkd_typescale_nmkd_8x_wtfpl_esrgan_text_2020_11_04/8x_NMKD-Typescale_175k.pth --cpu
+# [cartoons]
+# python test.py ~/dev/universityofprofessorex/ESRGAN/models/8x_boymebob_redux_joey_8x_cc_by_nc_sa_4_0_esrganplus_joey_s_fork_efonte_fork_or_innfer_required_to_use_animation_2021_08_19_upscaling_cartoons/8x_BoyMeBob-Redux/8x_BoyMeBob-Redux_200000_G.pth --cpu
 import sys
 import os.path
 import glob
@@ -15,6 +22,66 @@ import numpy as np
 import torch
 import architecture as arch
 import argparse
+import pathlib
+
+import builtins
+# import collections
+import inspect
+import itertools
+from os import PathLike, fspath, path
+import re
+import sys
+
+from typing import TYPE_CHECKING, Optional, Sequence, Type, TypeVar
+
+import numpy as np
+
+if TYPE_CHECKING:
+    import packaging.version
+
+
+ROOT_DIR = path.dirname(path.dirname(__file__))
+
+try:
+    from importlib import metadata as importlib_metadata
+except ImportError:
+    import importlib_metadata  # noqa
+
+
+
+T = TypeVar("T", str, Sequence[str])
+
+
+def abspath_or_url(relpath: T) -> T:
+    """Utility function that normalizes paths or a sequence thereof.
+
+    Expands user directory and converts relpaths to abspaths... but ignores
+    URLS that begin with "http", "ftp", or "file".
+
+    Parameters
+    ----------
+    relpath : str or list or tuple
+        A path, or list or tuple of paths.
+
+    Returns
+    -------
+    abspath : str or list or tuple
+        An absolute path, or list or tuple of absolute paths (same type as
+        input).
+    """
+    from urllib.parse import urlparse
+
+    if isinstance(relpath, (tuple, list)):
+        return type(relpath)(abspath_or_url(p) for p in relpath)
+
+    if isinstance(relpath, (str, PathLike)):
+        relpath = fspath(relpath)
+        urlp = urlparse(relpath)
+        if urlp.scheme and urlp.netloc:
+            return relpath
+        return path.abspath(path.expanduser(relpath))
+
+    raise TypeError("Argument must be a string, PathLike, or sequence thereof")
 
 parser = argparse.ArgumentParser()
 parser.add_argument('model')
@@ -37,6 +104,9 @@ elif os.path.isfile(args.output):
     sys.exit(1)
 elif not os.path.exists(args.output):
     os.mkdir(args.output)
+
+import bpdb
+bpdb.set_trace()
 
 model_path = args.model
 device = torch.device('cpu' if args.cpu else 'cuda')
