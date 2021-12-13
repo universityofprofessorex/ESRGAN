@@ -1,0 +1,225 @@
+name: 4x_Valar_v1
+use_tb_logger: false
+model: sr
+scale: 4
+gpu_ids: [0]
+use_amp: false
+use_swa: false
+use_cem: false
+
+# Dataset options:
+datasets:
+  train:
+    name: AdobeMIT5k
+    mode: aligned
+    dataroot_HR: [
+      '../mit5k/hr',
+      ] # high resolution / ground truth images
+    dataroot_LR: [
+      '../mit5k/lr',
+      ] # low resolution images
+    subset_file: null
+    use_shuffle: true
+    znorm: false
+    n_workers: 4
+    batch_size: 1
+    virtual_batch_size: 1
+    preprocess: crop
+    crop_size: 112
+    image_channels: 3
+
+    # AdaTarget
+    use_atg: true
+    atg_start_iter_rel: 0.83
+
+    # Color space conversion
+    # color: 'y'
+    # color_LR: 'y'
+    # color_HR: 'y'
+
+    # Rotations augmentations:
+    use_flip: true
+    use_rot: true
+    use_hrrot: false
+
+    # Presets and on the fly (OTF) augmentations
+
+    # Resize Options
+    lr_downscale: true
+    lr_downscale_types: [linear, bicubic, realistic]
+
+    aug_downscale: 0.5
+    resize_strat: pre 
+
+    # Blur degradations
+    #lr_blur: true
+    #lr_blur_types: {sinc: 0.05, iso: 0.1, aniso: 0.1}
+    #iso:
+    #  p: 0.4
+    #  min_kernel_size: 1
+    #  kernel_size: 5
+    #  sigmaX: [0.1, 1.0]
+    #  noise: null
+
+    #aniso:
+    #  p: 0.3
+    #  min_kernel_size: 1
+    #  kernel_size: 3
+    #  sigmaX: [0.1, 1.0]
+    #  sigmaY: [0.1, 1.0]
+    #  angle: [0, 180]
+    #  noise: null
+
+    #sinc:
+    #  p: 0.2
+    #  min_kernel_size: 1
+    #  kernel_size: 3
+    #  min_cutoff: null
+
+    lr_noise: true
+    lr_noise_types: {JPEG: 3, camera: 1.6, patches: 2.5, clean: 1.5}
+    hr_unsharp_mask: true
+    hr_rand_unsharp: 1
+
+    camera:
+      p: 0.25
+      demosaic_fn: malvar
+      xyz_arr: D50
+      rg_range: [0.7, 3.0]
+      bg_range: [0.7, 3.0]
+
+    jpeg:
+      p: 0.75
+      min_quality: 30
+      max_quality: 95
+
+    unsharp:
+      p: 0.12
+      blur_algo: median
+      kernel_size: 1
+      strength: 0.10
+      unsharp_algo: laplacian
+     
+    dataroot_kernels: '../mit5k/kernelgan_hr/'
+    noise_data: '../mit5k/noise_patches_path/'
+
+    # pre_crop: true
+    # hr_downscale: true
+    # hr_downscale_amt: [2, 1.75, 1.5, 1]
+    # shape_change: reshape_lr
+
+path:
+    root: './'
+    #pretrain_model_G: '../models/4x_RRDB_ESRGAN.pth'
+    #pretrain_model_Loc: '../models/locnet.pth'
+    #resume_state: './experiments/4x_Valar_v1/training_state/latest.state'
+
+# Generator options:
+network_G:
+    which_model_G: esrgan
+    plus: true
+    gaussian_noise: true
+
+# Discriminator options:
+network_D: unet 
+
+train:
+    # Optimizer options:
+    optim_G: AdamP
+    optim_D: AdamP
+    
+    # Schedulers options:
+    lr_scheme: MultiStepLR
+    lr_steps_rel: [0.1, 0.2, 0.4, 0.6]
+    lr_gamma: 0.5
+
+    # For SWA scheduler
+    swa_start_iter_rel: 0.75
+    swa_lr: 1e-4
+    swa_anneal_epochs: 10
+    swa_anneal_strategy: "cos"
+    
+    # Losses:
+    pixel_criterion: clipl1  # pixel (content) loss
+    pixel_weight: 0.25
+    perceptual_opt:
+      perceptual_layers: {"conv1_2": 0.1, "conv2_2": 0.1, "conv3_4": 1.0, "conv4_4": 1.0, "conv5_4": 1.0}
+    use_input_norm: true
+    perceptual_weight: 1.05
+    style_weight: 0
+    feature_criterion: l1 # feature loss (VGG feature network)
+    feature_weight: 1
+    cx_type: contextual  # contextual loss
+    cx_weight: 0.3
+    cx_vgg_layers: {conv_3_2: 1.0, conv_4_2: 1.0}
+    # hfen_criterion: l1  # hfen
+    # hfen_weight: 1e-6 
+    # grad_type: grad-4d-l1  # image gradient loss
+    # grad_weight: 4e-1
+    #tv_type: normal  # total variation
+    #tv_weight: 1e-5
+    #tv_norm: 1
+    #ssim_type: ms-ssim  # structural similarity
+    #ssim_weight: 1
+    #lpips_weight: 0.6 # perceptual loss
+    #lpips_type: net-lin
+    #lpips_net: squeeze
+
+    # Experimental losses
+    # spl_type: spl  # spatial profile loss
+    # spl_weight: 0.1
+    # of_type: overflow  # overflow loss
+    # of_weight: 0.2
+    # range_weight: 1  # range loss
+    # fft_type: fft  # FFT loss
+    # fft_weight: 0.1
+    color_criterion: color-l1cosinesim  # color consistency loss
+    color_weight: 1.0
+    # avg_criterion: avg-l1  # averaging downscale loss
+    # avg_weight: 5
+    # ms_criterion: multiscale-l1  # multi-scale pixel loss
+    # ms_weight: 1e-2
+    # fdpl_type: fdpl  # frequency domain-based perceptual loss
+    # fdpl_weight: 1e-3
+    
+    # Adversarial loss:
+    gan_type: vanilla
+    gan_weight: 1e-1
+    # freeze_loc: 4
+    # For wgan-gp:
+    # D_update_ratio: 1
+    # D_init_iters: 0
+    # gp_weigth: 10
+    # Feature matching (if using the discriminator_vgg_128_fea or discriminator_vgg_fea):
+    # gan_featmaps: true
+    # dis_feature_criterion: cb  # discriminator feature loss
+    # dis_feature_weight: 0.01
+    
+    # Differentiable Augmentation for Data-Efficient GAN Training
+    # diffaug: true
+    # dapolicy: 'color,transl_zoom,flip,rotate,cutout'
+    
+    # Batch (Mixup) augmentations
+    mixup: true
+    mixopts: [blend, rgb, mixup, cutmix, cutmixup] # , "cutout", "cutblur"]
+    mixprob: [0.5, 0.5, 1.0, 1.0, 1.0] #, 1.0, 1.0]
+    # mixalpha: [0.6, 1.0, 1.2, 0.7, 0.7] #, 0.001, 0.7]
+    aux_mixprob: 1.0
+    # aux_mixalpha: 1.2
+    ## mix_p: 1.2
+    
+    # Frequency Separator
+    fs: true
+    lpf_type: average
+    hpf_type: average
+    
+    # Other training options:
+    manual_seed: 0
+    niter: 4e5
+    warmup_iter: -1
+    # overwrite_val_imgs: true
+
+logger:
+    print_freq: 100
+    save_checkpoint_freq: 5e3
+    overwrite_chkp: false

@@ -1,3 +1,12 @@
+# python test.py models/RRDB_ESRGAN_x4_old_arch.pth --cpu
+# python test.py /Users/malcolm/dev/universityofprofessorex/ESRGAN/models/countryroads_ezogaming_4x_wtfpl_esrgan_universal_model/4x_CountryRoads_377000_G.pth --cpu
+# python test.py /Users/malcolm/dev/universityofprofessorex/ESRGAN/models/4x_valar_musl_4x_cc0_esrganplus_realistic_photos/4x_Valar_v1.pth --cpu
+# python test.py /Users/malcolm/dev/universityofprofessorex/ESRGAN/models/600k_650k_boorugan_tal_4x_wtfpl_esrgan_anime/4x_BooruGan_600k.pth --cpu
+# python test.py /Users/malcolm/dev/universityofprofessorex/ESRGAN/models/600k_650k_boorugan_tal_4x_wtfpl_esrgan_anime/4x_BooruGan_650k.pth --cpu
+# python test.py /Users/malcolm/dev/universityofprofessorex/ESRGAN/models/fsmangav2_jacob__4x_cc_by-nc-sa_4_0_esrgan_manga/4xFSMangaV2.pth --cpu
+# python test.py /Users/malcolm/dev/universityofprofessorex/ESRGAN/models/mangascalev3_bunzeroplusplus_2x_cc_by_nc_sa_4_0_esrganplus_manga/2x_MangaScaleV3.pth --cpu
+# python test.py /Users/malcolm/dev/universityofprofessorex/ESRGAN/models/nmkd_typescale_nmkd_8x_wtfpl_esrgan_text_2020_11_04/8x_NMKD-Typescale_175k.pth --cpu
+# python test.py /Users/malcolm/dev/universityofprofessorex/ESRGAN/models/8x_boymebob_redux_joey_8x_cc_by_nc_sa_4_0_esrganplus_joey_s_fork_efonte_fork_or_innfer_required_to_use_animation_2021_08_19_upscaling_cartoons/8x_BoyMeBob-Redux/8x_BoyMeBob-Redux_200000_G.pth --cpu
 import sys
 import os.path
 import glob
